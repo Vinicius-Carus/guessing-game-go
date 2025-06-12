@@ -75,13 +75,13 @@ func readJsonFile() Words {
 func getWordLetters() []string {
 	words := readJsonFile()
 
-	indexWord := rand.Intn(len(words.Words))
+	wordIndex := rand.Intn(len(words.Words))
 
-	choosedWord := words.Words[indexWord] 
+	chosenWord := words.Words[wordIndex] 
 
-	splitedWord := strings.Split(choosedWord, "")
+	splittedWord := strings.Split(chosenWord, "")
 
-	return splitedWord
+	return splittedWord
 }
 
 func feedbackMessage(isRight bool) {
@@ -92,19 +92,18 @@ func feedbackMessage(isRight bool) {
 	}
 }
 
-func displayLetters(choosedLetters []string, wordLetters []string) {
-	var isChoosedLetter bool
-
+func displayLetters(chosenLetters []string, wordLetters []string) {
+	var isChosenLetter bool
 
 	for _, letter := range wordLetters {
 
-		for _, choosedLetter := range choosedLetters {
-			isChoosedLetter = letter == choosedLetter
+		for _, chosenLetter := range chosenLetters {
+			isChosenLetter = letter == chosenLetter
 
-			if isChoosedLetter { break }
+			if isChosenLetter { break }
 		}
 
-		if isChoosedLetter {
+		if isChosenLetter {
 			fmt.Print(letter)
 		} else {
 			fmt.Print("_")
@@ -114,13 +113,11 @@ func displayLetters(choosedLetters []string, wordLetters []string) {
 	}
 
 	fmt.Println()
-
 }
 
-func checkIfLetterWasChoosedBefore(letter string, choosedLetters []string) bool {
-
-	for _, letterChoosed := range choosedLetters {
-		if letterChoosed == letter {
+func checkIfLetterWasChosenBefore(letter string, chosenLetters []string) bool {
+	for _, chosenLetter := range chosenLetters {
+		if chosenLetter == letter {
 			return true
 		}
 	}
@@ -128,7 +125,7 @@ func checkIfLetterWasChoosedBefore(letter string, choosedLetters []string) bool 
 	return false
 }
 
-func checkIfChoosedRight(letter string, wordLetters []string) bool {
+func checkIfChosenRight(letter string, wordLetters []string) bool {
 	for _, wordLetter := range wordLetters {
 		if wordLetter == letter {
 			return true
@@ -138,12 +135,12 @@ func checkIfChoosedRight(letter string, wordLetters []string) bool {
 	return false
 }
 
-func checkIfCompletedWord(choosedLetters []string, wordLetters []string) bool {
+func checkIfWordComplete(chosenLetters []string, wordLetters []string) bool {
 	for _, letter := range wordLetters {
 		var hasTheLetter = false
 
-		for _, choosedLetter := range choosedLetters {
-			hasTheLetter = choosedLetter == letter
+		for _, chosenLetter := range chosenLetters {
+			hasTheLetter = chosenLetter == letter
 
 			if hasTheLetter {
 				break
@@ -159,51 +156,49 @@ func checkIfCompletedWord(choosedLetters []string, wordLetters []string) bool {
 }
 
 func playGame(wordLetters []string) {
+	chosenLettersSlice := make([]string, 0, 2)
 
-	choosedLettersSlice := make([]string, 0, 2)
+	var chosenLetter string
 
-	var choosedLetter string
+	continueAsking := true
 
-	constinueAsking := true
-
-	var lifes = 3
+	var lives = 3
 
 	fmt.Println()
 
 	fmt.Println("The Word is")
-	displayLetters(choosedLettersSlice, wordLetters)
+	displayLetters(chosenLettersSlice, wordLetters)
 
-
-	for constinueAsking && lifes != 0 {
+	for continueAsking && lives != 0 {
 		fmt.Println()
-		fmt.Printf("You have %d/3 lifes\n", lifes)
+		fmt.Printf("You have %d/3 lives\n", lives)
 		fmt.Print("Choose a letter: ")
-		fmt.Scan(&choosedLetter)
-		choosedLetter = strings.TrimSpace(strings.ToLower(choosedLetter))
+		fmt.Scan(&chosenLetter)
+		chosenLetter = strings.TrimSpace(strings.ToLower(chosenLetter))
 
-		if len(choosedLetter) == 1 {
-			if !checkIfLetterWasChoosedBefore(choosedLetter, choosedLettersSlice) {
-				choosedLettersSlice = append(choosedLettersSlice, choosedLetter)
+		if len(chosenLetter) == 1 {
+			if !checkIfLetterWasChosenBefore(chosenLetter, chosenLettersSlice) {
+				chosenLettersSlice = append(chosenLettersSlice, chosenLetter)
 
-				isRight := checkIfChoosedRight(choosedLetter, wordLetters)
+				isRight := checkIfChosenRight(chosenLetter, wordLetters)
 
-				displayLetters(choosedLettersSlice, wordLetters)
+				displayLetters(chosenLettersSlice, wordLetters)
 
 				feedbackMessage(isRight)
 
 				if !isRight {
-					lifes--
+					lives--
 				}
 
-				isCompleteWord := checkIfCompletedWord(choosedLettersSlice, wordLetters)
+				isWordComplete := checkIfWordComplete(chosenLettersSlice, wordLetters)
 
-				if isCompleteWord {
+				if isWordComplete {
 					fmt.Println("Congratulations you got it right!!")
-					constinueAsking = false
+					continueAsking = false
 				}
 
 			} else {
-				fmt.Println("You already choosed this letter!")
+				fmt.Println("You already chose this letter!")
 			}
 
 		} else {
@@ -211,14 +206,12 @@ func playGame(wordLetters []string) {
 			fmt.Println("One letter only!")
 			fmt.Println()
 		}
-
 	}
 
-	if lifes == 0 {
+	if lives == 0 {
 		fmt.Println()
 		fmt.Println("Oh no you are dead! :(")
 		fmt.Printf("The word was %s!", strings.Join(wordLetters, ""))
 	}
-
 }
 
